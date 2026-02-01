@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: fullcycle
+      MYSQL_USER: fullcycleusername
+      MYSQL_PASSWORD: fullcyclepassword
+    volumes:
+      - mysql_data_fullcycle:/var/lib/mysql
+    networks:
+      - fullcycle
+
+  node:
+    build: .
+    container_name: node
+    restart: always
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mysql
+    networks:
+      - fullcycle
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - node
+    networks:
+      - fullcycle
+
+volumes:
+  mysql_data_fullcycle:
+
+networks:
+  fullcycle:
+    driver: bridge

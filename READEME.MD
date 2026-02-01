@@ -1,0 +1,1 @@
+Para executar deve rodar o comando docker compose up na raiz do repositorio
